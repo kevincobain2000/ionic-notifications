@@ -4,15 +4,17 @@ angular.module('ionic-notification', ['ionic'])
   .provider('ionicNotification', function () {
 
     function closeNotification(item) {
-        item = $(item);
+        item = angular.element(item);
         if (item.length === 0) return;
         if (item.hasClass('notification-item-removing')) return;
-        var container = $('.notifications');
+        // var container = $('.notifications');
+        var container = angular.element($document[0].querySelector('.notifications'))
     
-        var itemHeight = item.outerHeight();
+        // var itemHeight = item.outerHeight();
+        var itemHeight = outerHeight(item);
         item.css('height', itemHeight + 'px')
         transition(item, 0);
-        var clientLeft = item[0].clientLeft;
+        // var clientLeft = item[0].clientLeft;
     
         item.css('height', '0px')
         transition(item,'')
@@ -28,7 +30,7 @@ angular.module('ionic-notification', ['ionic'])
         transitionEnd(item, function () {
             item.remove();
             if (container.find('.notification-item').length === 0) {
-                container.hide();
+                hide(container);
             }
         });
     }
@@ -80,13 +82,35 @@ angular.module('ionic-notification', ['ionic'])
         }
         return element;
     }
+    function show(element) {
+        for (var i = 0; i < element.length; i++) {
+            element[i].style.display = 'block';
+        }
+        return element;
+    }
+    function hide(element) {
+        for (var i = 0; i < element.length; i++) {
+            element[i].style.display = 'none';
+        }
+        return element;
+    }
+
+    function outerHeight(element, includeMargins) {
+        if (element.length > 0) {
+            if (includeMargins)
+                return element[0].offsetHeight + parseFloat(element.css('margin-top')) + parseFloat(element.css('margin-bottom'));
+            else
+                return element[0].offsetHeight;
+        }
+        else return null;
+    }
 
     this.$get = ['$compile', '$document', '$interval', '$rootScope', '$timeout',
       function ($compile, $document, $interval, $rootScope, $timeout) {
         return {
 
           show: function (params) {
-            var _tempNotificationElement;
+            
             if (!params) return;
             if (typeof params.title        === 'undefined') params.title        = "";
             if (typeof params.subtitle     === 'undefined') params.subtitle     = "";
@@ -95,11 +119,17 @@ angular.module('ionic-notification', ['ionic'])
             if (typeof params.closeIcon    === 'undefined') params.closeIcon    = true;
             if (typeof params.closeOnClick === 'undefined') params.closeOnClick = true;
 
+
+            var _tempNotificationElement = angular.element("<div></div>")
+            // _tempNotificationElement.append("<div></div>");
+
             if (!_tempNotificationElement) _tempNotificationElement = document.createElement('div');
-            var container = $('.notifications');
+            // var container = $('.notifications');
+            var container = angular.element($document[0].querySelector('.notifications'))
             if (container.length === 0) {
-                $('body').append('<div class="notifications list-block media-list"><ul></ul></div>');
-                container = $('.notifications');
+                var body = angular.element($document[0].querySelector('body'))
+                body.append('<div class="notifications list-block media-list"><ul></ul></div>');
+                container = angular.element($document[0].querySelector('.notifications'))
             }
             var list = container.children('ul');
         
@@ -123,12 +153,14 @@ angular.module('ionic-notification', ['ionic'])
                                 '</div>' +
                             '</div></li>';
             }
-            _tempNotificationElement.innerHTML = itemHTML;
+            // _tempNotificationElement.innerHTML = itemHTML;
+            _tempNotificationElement.append(itemHTML);
         
-            var item = $(_tempNotificationElement).children();
+            // var item = $(_tempNotificationElement).children();
+            var item = angular.element(_tempNotificationElement).children();
             item.on('click', function (e) {
                 var close = false;
-                if ($(e.target).is('.close-notification') || $(e.target).parents('.close-notification').length > 0) {
+                if (angular.element(e.target).is('.close-notification') || angular.element(e.target).parents('.close-notification').length > 0) {
                     close = true;
                 }
                 else {
@@ -139,14 +171,15 @@ angular.module('ionic-notification', ['ionic'])
             });            
 
             list.prepend(item[0]);
-            container.show();
+            show(container);
             
-            var itemHeight = item.outerHeight();
+            // var itemHeight = item.outerHeight();
+            var itemHeight = outerHeight(item);
             item.css('marginTop', -itemHeight + 'px');
             
             transition(item, 0);
         
-            var clientLeft = item[0].clientLeft;
+            // var clientLeft = item[0].clientLeft;
             transition(item, '');
             item.css('marginTop', '0px');
         
