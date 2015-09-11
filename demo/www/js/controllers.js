@@ -3,18 +3,31 @@ angular.module('starter.controllers', ['ionic-notification'])
 .controller('DashCtrl', function($scope, ionicNotification) {
 
   $scope.show = show;
+  $scope.hideAll = hideAll;
 
-  function show(){
-    var lorem = "http://lorempixel.com/100/100/"
-    var message = "Wonder if you had time to Check out that report..."
+  function show(args){
+    
+    var title = "Johny Doe"
+    var message = "Close icon - " + args.closeIcon
+    var subtitle =  "Close On Click - " + args.closeOnClick
+    var closeIcon = args.closeIcon
+    var closeOnClick = args.closeOnClick
+    var media = '<img width="44" height="44" style="border-radius:100%;object-fit:cover" src="http://lorempixel.com/100/100/">'
+    
+
     var params = {
-                    title: "Johny Doe",
-                    subtitle: "Are you Busy?",
-                    message: message.substring(0, 30) +'...',
-                    closeIcon: true,
-                    media: '<img width="44" height="44" style="border-radius:100%;object-fit:cover" src="'+ lorem+'">',
+                    title: title,
+                    subtitle:subtitle,
+                    message: message,
+                    closeIcon: closeIcon,
+                    closeOnClick: closeOnClick,
+                    media: media,
                   }
     ionicNotification.show(params);
+  }
+
+  function hideAll(){
+    ionicNotification.hideAll(); 
   }
 
 })

@@ -1,11 +1,16 @@
 <ion-view view-title="ionic Notification">
   <ion-content class="padding">
-    <div class="list card">
+    <div class="list card" style="margin-top:100px;">
       <div class="item item-divider">Recent Updates</div>
       <div class="item item-body text-center">
-        <button type="" class="button button-positive  button-small" ng-click="show()">Show</button>
-        &nbsp;&nbsp;
-        <button type="" class="button button-assertive button-small" ng-click="hide()">Hide</button>
+        <p>
+          <button type="" class="button button-positive  button-small" ng-click="show({closeIcon:false, closeOnClick:true})">closeOnClick, !closeIcon</button>
+        </p>
+        <p>
+          <button type="" class="button button-positive  button-small" ng-click="show({closeIcon:true, closeOnClick:false})">!closeOnClick, closeIcon</button>
+        </p>
+        
+        <button type="" class="button button-assertive button-small" ng-click="hideAll()">Hide All</button>
       </div>
     </div>
   </ion-content>
