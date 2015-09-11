@@ -1,0 +1,6 @@
+.idea/
+node_modules/
+bower_components/
+demo/node_modules/
+demo/bower_components/
+.DS_STORE

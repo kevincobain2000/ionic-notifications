@@ -1,0 +1,31 @@
+{
+  "name": "ionic-toast",
+  "version": "0.1.1",
+  "authors": [
+    "kevincobain2000 <kevincobain2000@gmail.com>"
+  ],
+  "description": "'ionic-notifications' bower component for ionic framework applications",
+  "main": [
+    "./dist/ionic-notifications.js",
+    "./dist/style.css"
+  ],
+  "keywords": [
+    "ionic-notifications",
+    "notifications",
+    "ionic",
+    "notifications for ionic",
+    "notifications for ionic framework"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/kevincobain2000/ionic-notifications",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ionic": ">=0.9.27"
+  }
+}
