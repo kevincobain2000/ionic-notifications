@@ -8,6 +8,5 @@ This is WIP
 
 ## To Do List
 
-- Close Notification on click
-- bower?
+- jquery → angular
 
