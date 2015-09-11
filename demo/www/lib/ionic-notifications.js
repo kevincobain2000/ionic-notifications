@@ -3,24 +3,19 @@ angular.module('ionic-notification', ['ionic'])
 
   .provider('ionicNotification', function () {
 
-    function closeNotification(item) {
+    function closeNotification(item, $document) {
         item = angular.element(item);
         if (item.length === 0) return;
         if (item.hasClass('notification-item-removing')) return;
-        // var container = $('.notifications');
         var container = angular.element($document[0].querySelector('.notifications'))
     
-        // var itemHeight = item.outerHeight();
         var itemHeight = outerHeight(item);
         item.css('height', itemHeight + 'px')
         transition(item, 0);
-        // var clientLeft = item[0].clientLeft;
     
         item.css('height', '0px')
         transition(item,'')
         item.addClass('notification-item-removing');
-
-        if (item.data('f7NotificationOnClose')) item.data('f7NotificationOnClose')();
     
         if (container.find('.notification-item:not(.notification-item-removing)').length === 0) {
             transform(container, '');
@@ -44,6 +39,56 @@ angular.module('ionic-notification', ['ionic'])
         }
         return element;
     }
+    function is(element, selector) {
+        if (!element[0] || typeof selector === 'undefined') return false;
+        var compareWith, i;
+        if (typeof selector === 'string') {
+            var el = element[0];
+            if (el === document) return selector === document;
+            if (el === window) return selector === window;
+
+            if (el.matches) return el.matches(selector);
+            else if (el.webkitMatchesSelector) return el.webkitMatchesSelector(selector);
+            else if (el.mozMatchesSelector) return el.mozMatchesSelector(selector);
+            else if (el.msMatchesSelector) return el.msMatchesSelector(selector);
+            else {
+                compareWith = $(selector);
+                for (i = 0; i < compareWith.length; i++) {
+                    if (compareWith[i] === element[0]) return true;
+                }
+                return false;
+            }
+        }
+        else if (selector === document) return element[0] === document;
+        else if (selector === window) return element[0] === window;
+        else {
+            if (selector.nodeType || selector instanceof Dom7) {
+                compareWith = selector.nodeType ? [selector] : selector;
+                for (i = 0; i < compareWith.length; i++) {
+                    if (compareWith[i] === element[0]) return true;
+                }
+                return false;
+            }
+            return false;
+        }
+    }
+    function parents(element, selector) {
+        var parents = [];
+        for (var i = 0; i < element.length; i++) {
+            var parent = element[i].parentNode;
+            while (parent) {
+                if (selector) {
+                    if (is(angular.element(parent), selector)) parents.push(parent);
+                }
+                else {
+                    parents.push(parent);
+                }
+                parent = parent.parentNode;
+            }
+        }
+        // return angular.element($.unique(parents));
+        return angular.element(parents);
+    }    
 
     function addClass(element, className) {
         if (typeof className === 'undefined') {
@@ -104,8 +149,7 @@ angular.module('ionic-notification', ['ionic'])
         }
         else return null;
     }
-
-    this.$get = ['$compile', '$document', '$interval', '$rootScope', '$timeout',
+   this.$get = ['$compile', '$document', '$interval', '$rootScope', '$timeout',
       function ($compile, $document, $interval, $rootScope, $timeout) {
         return {
 
@@ -120,11 +164,9 @@ angular.module('ionic-notification', ['ionic'])
             if (typeof params.closeOnClick === 'undefined') params.closeOnClick = true;
 
 
-            var _tempNotificationElement = angular.element("<div></div>")
-            // _tempNotificationElement.append("<div></div>");
+            var _tempNotificationElement;
 
             if (!_tempNotificationElement) _tempNotificationElement = document.createElement('div');
-            // var container = $('.notifications');
             var container = angular.element($document[0].querySelector('.notifications'))
             if (container.length === 0) {
                 var body = angular.element($document[0].querySelector('body'))
@@ -153,33 +195,32 @@ angular.module('ionic-notification', ['ionic'])
                                 '</div>' +
                             '</div></li>';
             }
-            // _tempNotificationElement.innerHTML = itemHTML;
-            _tempNotificationElement.append(itemHTML);
+            _tempNotificationElement.innerHTML = itemHTML;
         
-            // var item = $(_tempNotificationElement).children();
             var item = angular.element(_tempNotificationElement).children();
-            item.on('click', function (e) {
+            item.on('click', function ($e) {
                 var close = false;
-                if (angular.element(e.target).is('.close-notification') || angular.element(e.target).parents('.close-notification').length > 0) {
+                var currentTarget = angular.element($e.currentTarget)
+                if (is(currentTarget, '.close-notification') 
+                    || parents(currentTarget, '.close-notification').length > 0) 
+                {
                     close = true;
                 }
                 else {
                     if (params.onClick) params.onClick(e, item[0]);
                     if (params.closeOnClick) close = true;
                 }
-                if (close) closeNotification(item[0]);
+                if (close) closeNotification(item[0], $document);
             });            
 
             list.prepend(item[0]);
             show(container);
             
-            // var itemHeight = item.outerHeight();
             var itemHeight = outerHeight(item);
             item.css('marginTop', -itemHeight + 'px');
             
             transition(item, 0);
         
-            // var clientLeft = item[0].clientLeft;
             transition(item, '');
             item.css('marginTop', '0px');
         

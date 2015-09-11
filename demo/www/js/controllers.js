@@ -4,7 +4,7 @@ angular.module('starter.controllers', ['ionic-notification'])
 
   $scope.show = show;
   $scope.hideAll = hideAll;
-
+  $scope.show({closeIcon:true,closeOnClick:true})
   function show(args){
     
     var title = "Johny Doe"
